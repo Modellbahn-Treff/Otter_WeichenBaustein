@@ -3665,26 +3665,26 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "0eb823ee-f4dd-4e84-938c-6f067e7994ed")
-		(property "Reference" "C12"
-			(at 33.02 62.6109 0)
+		(property "Reference" "C1"
+			(at 40.64 62.6109 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify right)
+				(justify left)
 			)
 		)
 		(property "Value" "100 µF"
-			(at 33.02 65.1509 0)
+			(at 40.64 65.1509 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify right)
+				(justify left)
 			)
 		)
 		(property "Footprint" "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm"
@@ -3729,7 +3729,7 @@
 		(instances
 			(project "WeichenBaustein"
 				(path "/1725eceb-0961-4b11-ba66-d87e36cc49b0"
-					(reference "C12")
+					(reference "C1")
 					(unit 1)
 				)
 			)
@@ -4635,81 +4635,6 @@
 			(project "WeichenBaustein"
 				(path "/1725eceb-0961-4b11-ba66-d87e36cc49b0"
 					(reference "#PWR035")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Mechanical:MountingHole")
-		(at 53.34 137.16 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "c0ad8acb-9272-496c-b6d5-3333db6d3beb")
-		(property "Reference" "H1"
-			(at 55.88 136.525 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "MountingHole"
-			(at 55.88 139.065 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "MountingHole:MountingHole_4.3mm_M4"
-			(at 53.34 137.16 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 53.34 137.16 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 53.34 137.16 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(instances
-			(project "WeichenBaustein"
-				(path "/1725eceb-0961-4b11-ba66-d87e36cc49b0"
-					(reference "H1")
 					(unit 1)
 				)
 			)
