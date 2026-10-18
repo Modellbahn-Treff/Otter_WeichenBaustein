@@ -18,7 +18,7 @@ static const char *NVS_NS = "settings";
 // ---------------------------------------------------------------------------
 
 uint8_t AbschNummer       = 1;
-uint8_t VerteilerBaustein = 1;
+uint8_t WeichenBaustein = 1;
 
 char ssid[SETTINGS_STR_LEN]        = "SSID";
 char password[SETTINGS_STR_LEN]    = "PASSWORD";
@@ -81,7 +81,7 @@ void settings_load_from_nvs(void) {
 
     // uint8 scalars
     nvs_get_u8(h, "absch_nr", &AbschNummer);
-    nvs_get_u8(h, "vb",       &VerteilerBaustein);
+    nvs_get_u8(h, "wb",       &WeichenBaustein);
     nvs_get_u8(h, "net_b1",   &networkByte1);
     nvs_get_u8(h, "net_b2",   &networkByte2);
     nvs_get_u8(h, "gw_b3",    &gatewayByte3);
@@ -120,7 +120,7 @@ bool settings_save_to_nvs(void) {
     ESP_ERROR_CHECK(nvs_open(NVS_NS, NVS_READWRITE, &h));
 
     nvs_set_u8(h, "absch_nr", AbschNummer);
-    nvs_set_u8(h, "vb",       VerteilerBaustein);
+    nvs_set_u8(h, "wb",       WeichenBaustein);
     nvs_set_u8(h, "net_b1",   networkByte1);
     nvs_set_u8(h, "net_b2",   networkByte2);
     nvs_set_u8(h, "gw_b3",    gatewayByte3);
@@ -160,7 +160,7 @@ settings_result_t settings_apply_json(const char *json_str, char *tx_out, size_t
         snprintf(tx_out, tx_out_len, "%s", item->valuestring);
 
     if ((item = cJSON_GetObjectItem(root, "AbschNummer"))         && cJSON_IsNumber(item)) AbschNummer         = (uint8_t)item->valueint;
-    if ((item = cJSON_GetObjectItem(root, "VerteilerBaustein"))   && cJSON_IsNumber(item)) VerteilerBaustein   = (uint8_t)item->valueint;
+    if ((item = cJSON_GetObjectItem(root, "WeichenBaustein"))   && cJSON_IsNumber(item)) WeichenBaustein   = (uint8_t)item->valueint;
     if ((item = cJSON_GetObjectItem(root, "networkByte1"))        && cJSON_IsNumber(item)) networkByte1        = (uint8_t)item->valueint;
     if ((item = cJSON_GetObjectItem(root, "networkByte2"))        && cJSON_IsNumber(item)) networkByte2        = (uint8_t)item->valueint;
     if ((item = cJSON_GetObjectItem(root, "gatewayByte3"))        && cJSON_IsNumber(item)) gatewayByte3        = (uint8_t)item->valueint;

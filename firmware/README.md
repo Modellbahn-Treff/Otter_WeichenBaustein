@@ -1,16 +1,30 @@
-# Otter VerteilerBaustein — Firmware
+# Otter WeichenBaustein — Firmware
 
-ESP32 firmware for the Otter model railroad control system. The VerteilerBaustein (distribution building block) connects up to 5 plug-in modules and controls them via WiFi and MQTT.
+ESP32 firmware for the Otter model railroad control system. The WeichenBaustein (turnout building block) drives up to 8 solenoid turnouts (Weichen) via four SN754410 H-bridges and is controlled over WiFi and MQTT.
 
-## Supported module types
+## Turnout control
 
-Up to one module type may be active per slot (0–4). Enabling more than one type in the same slot is detected at startup and logged as a fatal error.
+Each turnout listens on its own MQTT topic. The payload selects the direction; the coil is energised for `AusSchaltZeitWeiche` ms and then switched off again.
 
-| Module | Channels | MQTT topics |
-|--------|----------|-------------|
-| **TM** – Button module  | 4 per module (up to 20 total) | `otter/TM/0` … `otter/TM/19` |
-| **SM** – Signal module  | 2 per module (up to 8 total)  | `otter/SM/0` … `otter/SM/7`  |
-| **WM** – Turnout module | 2 per module (up to 8 total)  | `otter/WM/0` … `otter/WM/7`  |
+| Topic (default) | Payload | Action |
+|-----------------|---------|--------|
+| `otter/WM/0` … `otter/WM/7` | `0` | Pulse turnout in direction 0 |
+| | `1` | Pulse turnout in direction 1 |
+
+Any other payload is ignored and logged as a warning.
+
+### Pin mapping
+
+| Turnout | GPIOs | H-bridge | Terminal J2 |
+|---------|-------|----------|-------------|
+| 0 | 4, 5   | U11 (1A, 2A) | 1–2   |
+| 1 | 13, 14 | U11 (3A, 4A) | 3–4   |
+| 2 | 16, 17 | U21 (1A, 2A) | 5–6   |
+| 3 | 18, 19 | U21 (3A, 4A) | 7–8   |
+| 4 | 21, 22 | U31 (1A, 2A) | 9–10  |
+| 5 | 23, 25 | U31 (3A, 4A) | 11–12 |
+| 6 | 26, 27 | U41 (1A, 2A) | 13–14 |
+| 7 | 32, 33 | U41 (3A, 4A) | 15–16 |
 
 ## Requirements
 
@@ -35,31 +49,68 @@ idf.py build flash monitor
 
 ## Configuration
 
-Settings are persisted in NVS and can be changed at runtime via the **serial configuration console** (115200 baud). Compiled-in defaults are defined in [main/settings.cpp](main/settings.cpp).
+Settings are persisted in NVS. Compiled-in defaults are defined in [main/settings.cpp](main/settings.cpp).
 
-| Setting | Description |
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `ssid` / `password` | `SSID` / `PASSWORD` | WiFi credentials (serial `wifi` command only) |
+| `mqtt_server` | `10.1.0.5` | MQTT broker IP address |
+| `client_name` | `test_client` | MQTT client ID — must be unique per board |
+| `networkByte1` / `networkByte2` | `10` / `1` | First two octets of the network address |
+| `AbschNummer` | `1` | Third octet of the static IP |
+| `WeichenBaustein` | `1` | Fourth octet of the static IP |
+| `gatewayByte3` / `gatewayByte4` | `0` / `1` | Last two octets of the default gateway |
+| `AusSchaltZeitWeiche` | `200` | Turnout pulse length in ms |
+| `MqttWMW` | `otter/WM/0` … `otter/WM/7` | Array of 8 turnout topics |
+| `MqttSet` | `otter/Set` | Topic for settings updates via MQTT |
+
+Static IP: `networkByte1.networkByte2.AbschNummer.WeichenBaustein`, netmask `255.255.0.0`.
+Gateway: `networkByte1.networkByte2.gatewayByte3.gatewayByte4`.
+
+Changes are saved immediately but take effect after a restart.
+
+### Serial console
+
+115200 baud on the USB port of the ESP32 dev board.
+
+| Command | Description |
 |---------|-------------|
-| `ssid` / `password` | WiFi credentials |
-| `mqtt_server` | MQTT broker IP address |
-| `client_name` | MQTT client ID |
-| `AbschNummer` | Third octet of the static IP |
-| `VerteilerBaustein` | Fourth octet of the static IP |
-| `networkByte1` / `networkByte2` | First two octets of the network address |
-| `gatewayByte3` / `gatewayByte4` | Last two octets of the default gateway |
-| `AusSchaltZeitWeiche` | Turnout pulse-off delay in ms (default: 50) |
-| `TM_active[n]` / `SM_active[n]` / `WM_active[n]` | Enable a module type for slot *n* |
+| `get` | Print all settings as JSON (password masked) |
+| `set {JSON}` | Update any of the non-WiFi settings above, save to NVS |
+| `wifi {"ssid":"x","password":"y"}` | Update WiFi credentials, save, restart |
+| `restart` | Restart the device |
+| `reset` | Erase saved settings, restart with defaults |
+| `help` | Show command overview |
 
-Static IP format: `networkByte1.networkByte2.AbschNummer.VerteilerBaustein`
+Example:
+
+```
+set {"AbschNummer":3,"WeichenBaustein":12,"client_name":"weichen_3_12"}
+```
+
+### MQTT
+
+Publish the same JSON as for `set` to `MqttSet` (default `otter/Set`). Two extra keys are supported:
+
+- `"tx": "<id>"` — echoed back in the acknowledgement
+- `"reboot": true` — restart after saving so the changes apply immediately
+
+The acknowledgement is published (retained) to `<MqttSet>/ack`:
+
+```json
+{"tx":"<id>"}
+{"tx":"<id>","error":"JSON parse error"}
+```
+
+WiFi credentials cannot be changed via MQTT.
 
 ## Project structure
 
 ```
 main/
-├── main.cpp              – Entry point; WiFi & MQTT initialisation
-├── tm.cpp / tm.h         – Button module (TM) logic
-├── sm.cpp / sm.h         – Signal module (SM) logic
-├── wm.cpp / wm.h         – Turnout module (WM) logic
-├── settings.cpp / .h     – NVS-backed configuration store
-├── serial_config.cpp / .h – Serial configuration console
-└── otter.cpp / otter.h   – Shared pin mapping & MQTT topic definitions
+├── main.cpp               – Entry point; WiFi & MQTT setup, main loop
+├── wm.cpp / wm.h          – Turnout (WM) pulse logic
+├── otter.cpp / otter.h    – GPIO pin mapping
+├── settings.cpp / .h      – NVS-backed configuration store
+└── serial_config.cpp / .h – Serial configuration console
 ```

@@ -41,7 +41,7 @@ static void cmd_get(void) {
     cJSON *root = cJSON_CreateObject();
 
     cJSON_AddNumberToObject(root, "AbschNummer",       AbschNummer);
-    cJSON_AddNumberToObject(root, "VerteilerBaustein", VerteilerBaustein);
+    cJSON_AddNumberToObject(root, "WeichenBaustein", WeichenBaustein);
     cJSON_AddStringToObject(root, "ssid",              ssid);
     cJSON_AddStringToObject(root, "password",          "***");
     cJSON_AddStringToObject(root, "mqtt_server",       mqtt_server);
@@ -142,7 +142,7 @@ static void cmd_help(void) {
     uart_println("  help                    - Show this message");
     uart_println("");
     uart_println("set JSON keys (all optional):");
-    uart_println("  AbschNummer, VerteilerBaustein, mqtt_server, client_name");
+    uart_println("  AbschNummer, WeichenBaustein, mqtt_server, client_name");
     uart_println("  networkByte1, networkByte2, gatewayByte3, gatewayByte4");
     uart_println("  AusSchaltZeitWeiche");
     uart_println("  MqttWMW (array of 8 strings)");

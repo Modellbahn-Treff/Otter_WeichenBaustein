@@ -136,7 +136,7 @@ static void setup_wifi() {
     // Static IP — mirrors the original WiFi.config() call
     esp_netif_dhcpc_stop(sta_netif);
     esp_netif_ip_info_t ip_info = {};
-    ip_info.ip.addr      = ESP_IP4TOADDR(networkByte1, networkByte2, AbschNummer,   VerteilerBaustein);
+    ip_info.ip.addr      = ESP_IP4TOADDR(networkByte1, networkByte2, AbschNummer,   WeichenBaustein);
     ip_info.gw.addr      = ESP_IP4TOADDR(networkByte1, networkByte2, gatewayByte3,  gatewayByte4);
     ip_info.netmask.addr = ESP_IP4TOADDR(255, 255, 0, 0);
     esp_netif_set_ip_info(sta_netif, &ip_info);

@@ -9,7 +9,7 @@
 #define SETTINGS_TOPIC_LEN 64
 
 extern uint8_t AbschNummer;
-extern uint8_t VerteilerBaustein;
+extern uint8_t WeichenBaustein;
 
 extern char ssid[SETTINGS_STR_LEN];
 extern char password[SETTINGS_STR_LEN];
